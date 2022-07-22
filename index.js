@@ -18,7 +18,6 @@ app.use((_, res, next) => {
 
 app.post("/authenticate", (req, res) => {
     const { code } = req.body;
-    console.log('>----<');
     const data = new FormData();
     data.append("code", code);
     data.append("client_id", CLIENT_ID);
@@ -48,20 +47,20 @@ app.post("/authenticate", (req, res) => {
             const [user, repos] = reps;
             return Promise.all([user.json(), repos.json()]);
         })
-        .then((jsons) => {
+        .then((data) => {
+            const [user, repos] = data;
             return {
-                user: jsons[0],
-                repos: jsons[1],
-                repos_total: jsons[1].length,
+                user,
+                repos,
+                repos_total: repos.length,
                 code: code,
             }
         })
-        // .then((response) => response.json())
         .then((response) => {
-        return res.status(200).json(response);
+            return res.status(200).json(response);
         })
         .catch((error) => {
-        return res.status(400).json(error);
+            return res.status(400).json(error);
         });
 });
 
